@@ -16,6 +16,7 @@ function connectSockets(http, session) {
    }));
    gIo.on('connection', socket => {
       gSocketBySessionIdMap[socket.handshake.sessionID] = socket
+      // console.log('socket', socket);
       // TODO: emitToUser feature - need to tested for CaJan21
       // if (socket.handshake?.session?.user) socket.join(socket.handshake.session.user._id)
       socket.on('disconnect', socket => {
@@ -23,15 +24,16 @@ function connectSockets(http, session) {
             gSocketBySessionIdMap[socket.handshake.sessionID] = null
          }
       })
-   //    socket.on('chat topic', topic => {
-   //       if (socket.myTopic === topic) return;
-   //       if (socket.myTopic) {
-   //          socket.leave(socket.myTopic)
-   //       }
-   //       socket.join(topic)
-   //       // logger.debug('Session ID is', socket.handshake.sessionID)
-   //       socket.topic = topic
-   //    })
+      socket.on('currBoard', boardId => {
+         if (socket.currBoard === boardId) return;
+         if (socket.currBoard) {
+            socket.leave(socket.myTopic)
+         }
+         socket.join(boardId)
+         // logger.debug('Session ID is', socket.handshake.sessionID)
+         socket.currBoard = currBoard
+         console.log('socket.currBoard', socket.currBoard);
+      })
    //    socket.on('chat newMsg', msg => {
    //       // emits to all sockets:
    //       // gIo.emit('chat addMsg', msg)
