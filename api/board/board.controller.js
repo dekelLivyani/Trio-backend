@@ -51,7 +51,6 @@ async function updateBoard(req, res) {
 
 async function addBoard(req, res) {
    try {
-      console.log('yes');
       const board = req.body
       const savedBoard = await boardService.add(board)
       res.send(savedBoard)
