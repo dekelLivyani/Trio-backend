@@ -15,7 +15,9 @@ function connectSockets(http, session) {
       autoSave: true
    }));
    gIo.on('connection', socket => {
+      console.log('socket connection');
       gSocketBySessionIdMap[socket.handshake.sessionID] = socket
+      // console.log('socket', socket);
       // TODO: emitToUser feature - need to tested for CaJan21
       // if (socket.handshake?.session?.user) socket.join(socket.handshake.session.user._id)
       socket.on('disconnect', socket => {
@@ -23,21 +25,26 @@ function connectSockets(http, session) {
             gSocketBySessionIdMap[socket.handshake.sessionID] = null
          }
       })
-   //    socket.on('chat topic', topic => {
-   //       if (socket.myTopic === topic) return;
-   //       if (socket.myTopic) {
-   //          socket.leave(socket.myTopic)
-   //       }
-   //       socket.join(topic)
-   //       // logger.debug('Session ID is', socket.handshake.sessionID)
-   //       socket.topic = topic
-   //    })
-   //    socket.on('chat newMsg', msg => {
-   //       // emits to all sockets:
-   //       // gIo.emit('chat addMsg', msg)
-   //       // emits only to sockets in the same room
-   //       gIo.to(socket.topic).emit('chat addMsg', msg)
-   //    })
+      socket.on('currBoard', boardId => {
+         console.log('hey');
+         if (socket.currBoard === boardId) return;
+         if (socket.currBoard) {
+            socket.leave(socket.myTopic)
+         }
+         socket.join(boardId)
+         // logger.debug('Session ID is', socket.handshake.sessionID)
+         socket.currBoard = boardId
+         console.log('socket.currBoard', socket.currBoard);
+      })
+      socket.on('board update', board => {
+         console.log('board', board);
+         // console.log('board update');
+         gIo.to(socket.currBoard).emit('board updated', board)
+         // emits to all sockets:
+         // gIo.emit('chat addMsg', msg)
+         // emits only to sockets in the same room
+         // gIo.to(socket.topic).emit('chat addMsg', msg)
+      })
    //    socket.on('user-watch', userId => {
    //       socket.join(userId)
    //    })
