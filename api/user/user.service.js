@@ -32,10 +32,10 @@ async function query(filterBy = {}) {
 }
 
 async function getById(userId) {
-   try {
+    try {
         const collection = await dbService.getCollection('user')
         const user = await collection.findOne({ '_id': ObjectId(userId) })
-      delete user.password
+        delete user.password
         return user
     } catch (err) {
         logger.error(`while finding user ${userId}`, err)
@@ -66,14 +66,18 @@ async function remove(userId) {
 async function update(user) {
     try {
         // peek only updatable fields!
-      //   const userToSave = {
-      //       _id: ObjectId(user._id),
-      //       username: user.username,
-      //       fullname: user.fullname,
-      //       // score: user.score
-      //   }
+        const userToSave = {
+            _id: ObjectId(user._id),
+            username: user.username,
+            fullname: user.fullname,
+            createdAt: user.createdAt,
+            email: user.email,
+            fullname: user.fullname,
+            imgUrl: user.imgUrl,
+            mentions: user.mentions
+        }
         const collection = await dbService.getCollection('user')
-       await collection.updateOne({ '_id': userToSave._id }, { $set: JSON.parse(JSON.stringify(user))})
+        await collection.updateOne({ '_id': userToSave._id }, { $set: userToSave })
         return userToSave;
     } catch (err) {
         logger.error(`cannot update user ${user._id}`, err)
