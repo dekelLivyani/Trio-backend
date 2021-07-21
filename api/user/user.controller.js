@@ -37,11 +37,11 @@ async function deleteUser(req, res) {
 }
 
 async function updateUser(req, res) {
-    try {
-        const user = req.body
+   try {
+       const user = req.body
         const savedUser = await userService.update(user)
         res.send(savedUser)
-        socketService.broadcast({ type: 'user-updated', data: review, to: savedUser._id })
+        socketService.broadcast({ type: 'user-updated', data: user, to: savedUser._id })
     } catch (err) {
         logger.error('Failed to update user', err)
         res.status(500).send({ err: 'Failed to update user' })
