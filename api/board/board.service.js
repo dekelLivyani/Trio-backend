@@ -11,6 +11,7 @@ module.exports = {
 
 async function query(filterBy) {
    // const criteria = _buildCriteria(filterBy);
+   // console.log('criteria from query', criteria);
    try {
       const collection = await dbService.getCollection('board')
       const boards = await collection.find().toArray()
@@ -65,8 +66,8 @@ async function add(board) {
       throw err
    }
 }
-function _buildCriteria(filterBy) {
-   const criteria = {}
+// function _buildCriteria(filterBy) {
+   // const criteria = {}
    // if (filterBy.txt) {
    //    const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
    //    criteria.txt = txtCriteria
@@ -78,6 +79,6 @@ function _buildCriteria(filterBy) {
    //    criteria.price = { $gte: +filterBy.price }
    // }
    // return criteria
-}
+// }
 
 
