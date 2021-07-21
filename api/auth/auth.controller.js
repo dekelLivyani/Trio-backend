@@ -1,5 +1,6 @@
 const authService = require('./auth.service')
-const logger = require('../../services/logger.service')
+const logger = require('../../services/logger.service');
+// const { socketService } = require('../../../frontend/src/services/socket.service');
 
 async function login(req, res) {
    const { username, password } = req.body
@@ -8,6 +9,8 @@ async function login(req, res) {
       const user = await authService.login(username, password)
       req.session.user = user
       res.json(user)
+      // Here
+      // socketService.emit('user-watch', user._id)
    } catch (err) {
       logger.error('Failed to Login ' + err)
       res.status(401).send({ err: 'Failed to Login' })
