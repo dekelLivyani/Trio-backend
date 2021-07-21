@@ -37,13 +37,25 @@ async function deleteUser(req, res) {
 }
 
 async function updateUser(req, res) {
+<<<<<<< HEAD
    try {
        const user = req.body
+=======
+    try {
+        console.log('updateUser');
+        const user = req.body
+        console.log('userToSave', user);
+>>>>>>> be87e358a847f31786aa7b181312718bdf26429f
         const savedUser = await userService.update(user)
+        console.log('savedUser', savedUser);
         res.send(savedUser)
+<<<<<<< HEAD
         socketService.broadcast({ type: 'user-updated', data: user, to: savedUser._id })
+=======
+        socketService.emitToUser({ type: 'user-updated', data: savedUser, userId: savedUser._id })
+>>>>>>> be87e358a847f31786aa7b181312718bdf26429f
     } catch (err) {
-        logger.error('Failed to update user', err)
+        logger.error('123 Failed to update user', err)
         res.status(500).send({ err: 'Failed to update user' })
     }
 }

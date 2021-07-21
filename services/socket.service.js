@@ -15,13 +15,14 @@ function connectSockets(http, session) {
       autoSave: true
    }));
    gIo.on('connection', socket => {
-      console.log('socket connection');
+      console.log('socket connection', socket.handshake.sessionID);
       gSocketBySessionIdMap[socket.handshake.sessionID] = socket
       // console.log('socket', socket);
       // TODO: emitToUser feature - need to tested for CaJan21
       // if (socket.handshake?.session?.user) socket.join(socket.handshake.session.user._id)
       socket.on('disconnect', socket => {
          if (socket.handshake) {
+            console.log('socket disconnect');
             gSocketBySessionIdMap[socket.handshake.sessionID] = null
          }
       })
@@ -37,20 +38,27 @@ function connectSockets(http, session) {
          console.log('socket.currBoard', socket.currBoard);
       })
       socket.on('board update', board => {
-         console.log('board', board);
-         // console.log('board update');
+         // console.log('board', board);
          gIo.to(socket.currBoard).emit('board updated', board)
          // emits to all sockets:
          // gIo.emit('chat addMsg', msg)
          // emits only to sockets in the same room
          // gIo.to(socket.topic).emit('chat addMsg', msg)
       })
-   //    socket.on('user-watch', userId => {
-   //       socket.join(userId)
-   //    })
-   //    socket.on('typing', ({ isTyping, username }) => {
-   //       socket.to(socket.topic).emit('display', { isTyping, username })
-   //    })
+      socket.on('user-watch', userId => {
+         console.log('user-watch', userId);
+         if (socket.userId === userId) return
+         if (socket.userId) {
+            socket.leave(socket.userId)
+         }
+         socket.join(userId)
+      })
+      //    socket.on('user-watch', userId => {
+      //       socket.join(userId)
+      //    })
+      //    socket.on('typing', ({ isTyping, username }) => {
+      //       socket.to(socket.topic).emit('display', { isTyping, username })
+      //    })
    })
 }
 
@@ -67,6 +75,7 @@ function emitToUser({ type, data, userId }) {
 
 // Send to all sockets BUT not the current socket 
 function broadcast({ type, data, room = null }) {
+   console.log('broadcasting', data);
    const store = asyncLocalStorage.getStore()
    const { sessionId } = store
    if (!sessionId) return logger.debug('Shoudnt happen, no sessionId in asyncLocalStorage store')
