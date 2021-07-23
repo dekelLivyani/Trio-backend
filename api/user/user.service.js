@@ -95,6 +95,7 @@ async function add(user) {
             imgUrl: user.imgUrl,
             email: user.email,
             mentions: user.mentions,
+            createdAt: Date.now()
         }
         const collection = await dbService.getCollection('user')
         await collection.insertOne(userToAdd)
