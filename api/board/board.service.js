@@ -6,12 +6,11 @@ module.exports = {
    getById,
    remove,
    update,
-   add
+   add,
+   addActivity
 }
 
 async function query(filterBy) {
-   // const criteria = _buildCriteria(filterBy);
-   // console.log('criteria from query', criteria);
    try {
       const collection = await dbService.getCollection('board')
       const boards = await collection.find().toArray()
@@ -66,19 +65,18 @@ async function add(board) {
       throw err
    }
 }
-// function _buildCriteria(filterBy) {
-   // const criteria = {}
-   // if (filterBy.txt) {
-   //    const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
-   //    criteria.txt = txtCriteria
-   // }
-   // if (filterBy.type && filterBy.type !== 'All') {
-   //    criteria.type = filterBy.type
-   // }
-   // if (filterBy.price) {
-   //    criteria.price = { $gte: +filterBy.price }
-   // }
-   // return criteria
-// }
+
+async function addActivity(boardId, activity) {
+   try {
+      boardId = ObjectId(boardId)
+      const collection = await dbService.getCollection('board')
+      await collection.updateOne({ _id: boardId }, { $push: { activities: activity } })
+      // await collection.updateOne({ _id: boardId }, { $push: { activities: { $each: [ activity ], $position: 1 } } })
+      return activity
+   } catch (err) {
+      console.log(`Beckend - ERROR: cannot add activity ${activity} to board ${boardId}`)
+      throw err
+   }
+}
 
 

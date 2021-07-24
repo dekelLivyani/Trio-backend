@@ -1,5 +1,6 @@
 const boardService = require('./board.service')
 const socketService = require('../../services/socket.service')
+// const asyncLocalStorage = require('../../services/als.service')
 const logger = require('../../services/logger.service')
 
 async function getBoard(req, res) {
@@ -29,6 +30,7 @@ async function getBoards(req, res) {
 
 async function deleteBoard(req, res) {
    try {
+      console.log('**********', req.params.id)
       await boardService.remove(req.params.id)
       res.send({ msg: 'Deleted successfully' })
    } catch (err) {
@@ -51,7 +53,6 @@ async function updateBoard(req, res) {
 
 async function addBoard(req, res) {
    try {
-      console.log('yes');
       const board = req.body
       const savedBoard = await boardService.add(board)
       res.send(savedBoard)
@@ -62,6 +63,31 @@ async function addBoard(req, res) {
    }
 }
 
+async function addActivity(req, res) {
+   try {
+      const { boardId } = req.body
+      const { activity } = req.body
+      // Option to use als store:
+      // const store = asyncLocalStorage.getStore()
+      // activity.user = { 
+      //    _id: store.userId,
+      //    username: store.userUsername,
+      //    fullname: store.userFullname,
+      //    imgUrl: store.userImgUrl
+      // }
+      activity.byMember = { 
+         _id: req.session.user._id,
+         username: req.session.user.username,
+         fullname: req.session.user.fullname,
+         imgUrl: req.session.user.imgUrl
+      }
+      const newActivity = await boardService.addActivity(boardId, activity)
+      res.send(newActivity)
+   } catch (err) {
+      logger.error('Failed to add activity to board', err)
+      res.status(500).send({ err: 'Failed to add activity to board' })
+   }
+}
 
 module.exports = {
    getBoard,
@@ -69,4 +95,5 @@ module.exports = {
    deleteBoard,
    updateBoard,
    addBoard,
+   addActivity
 }
