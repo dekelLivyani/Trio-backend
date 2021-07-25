@@ -1,3 +1,4 @@
 module.exports = {
-  'dbURL': 'mongodb+srv://dekelliv:12345@cluster0.xvht4.mongodb.net/trio_db?retryWrites=true&w=majority',
+   'dbURL': 'mongodb+srv://trio:aelHKovK7c3JpU7p@cluster0.fsogi.mongodb.net/trio_db?retryWrites=true&w=majority',
+
 }
