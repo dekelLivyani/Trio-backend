@@ -11,7 +11,6 @@ module.exports = {
 }
 
 async function query(filterBy) {
-   // const criteria = _buildCriteria(filterBy);
    try {
       const collection = await dbService.getCollection('board')
       const boards = await collection.find().toArray()
@@ -78,21 +77,6 @@ async function addActivity(boardId, activity) {
       console.log(`Beckend - ERROR: cannot add activity ${activity} to board ${boardId}`)
       throw err
    }
-}
-
-function _buildCriteria(filterBy) {
-   const criteria = {}
-   // if (filterBy.txt) {
-   //    const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
-   //    criteria.txt = txtCriteria
-   // }
-   // if (filterBy.type && filterBy.type !== 'All') {
-   //    criteria.type = filterBy.type
-   // }
-   // if (filterBy.price) {
-   //    criteria.price = { $gte: +filterBy.price }
-   // }
-   // return criteria
 }
 
 
