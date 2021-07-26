@@ -39,7 +39,10 @@ function connectSockets(http, session) {
       })
       socket.on('board update', board => {
          // console.log('board', board);
-         gIo.to(socket.currBoard).emit('board updated', board)
+         // gIo.to(socket.currBoard).emit('board updated', board)
+         // gIo.broadcast.to(socket.currBoard).emit('board updated', board)
+         // broadcast({ type: 'board updated', data: board, room: board._id })
+         socket.broadcast.to(socket.currBoard).emit('board updated', board)
          // emits to all sockets:
          // gIo.emit('chat addMsg', msg)
          // emits only to sockets in the same room
