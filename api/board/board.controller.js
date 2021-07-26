@@ -30,7 +30,6 @@ async function getBoards(req, res) {
 
 async function deleteBoard(req, res) {
    try {
-      console.log('**********', req.params.id)
       await boardService.remove(req.params.id)
       res.send({ msg: 'Deleted successfully' })
    } catch (err) {

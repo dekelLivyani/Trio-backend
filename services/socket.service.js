@@ -15,19 +15,15 @@ function connectSockets(http, session) {
       autoSave: true
    }));
    gIo.on('connection', socket => {
-      console.log('socket connection', socket.handshake.sessionID);
       gSocketBySessionIdMap[socket.handshake.sessionID] = socket
-      // console.log('socket', socket);
       // TODO: emitToUser feature - need to tested for CaJan21
       // if (socket.handshake?.session?.user) socket.join(socket.handshake.session.user._id)
       socket.on('disconnect', socket => {
          if (socket.handshake) {
-            console.log('socket disconnect');
             gSocketBySessionIdMap[socket.handshake.sessionID] = null
          }
       })
       socket.on('currBoard', boardId => {
-         console.log('hey');
          if (socket.currBoard === boardId) return;
          if (socket.currBoard) {
             socket.leave(socket.myTopic)
@@ -35,18 +31,16 @@ function connectSockets(http, session) {
          socket.join(boardId)
          // logger.debug('Session ID is', socket.handshake.sessionID)
          socket.currBoard = boardId
-         console.log('socket.currBoard', socket.currBoard);
       })
       socket.on('board update', board => {
-         // console.log('board', board);
-         gIo.to(socket.currBoard).emit('board updated', board)
+         // gIo.to(socket.currBoard).emit('board updated', board)
+         socket.broadcast.to(socket.currBoard).emit('board updated', board)
          // emits to all sockets:
          // gIo.emit('chat addMsg', msg)
          // emits only to sockets in the same room
          // gIo.to(socket.topic).emit('chat addMsg', msg)
       })
       socket.on('user-watch', userId => {
-         console.log('user-watch', userId);
          if (socket.userId === userId) return
          if (socket.userId) {
             socket.leave(socket.userId)
@@ -75,7 +69,6 @@ function emitToUser({ type, data, userId }) {
 
 // Send to all sockets BUT not the current socket 
 function broadcast({ type, data, room = null }) {
-   console.log('broadcasting', data);
    const store = asyncLocalStorage.getStore()
    const { sessionId } = store
    if (!sessionId) return logger.debug('Shoudnt happen, no sessionId in asyncLocalStorage store')

@@ -40,7 +40,6 @@ async function updateUser(req, res) {
    try {
        const user = req.body
         const savedUser = await userService.update(user)
-        console.log('savedUser', savedUser);
         res.send(savedUser)
         socketService.emitToUser({ type: 'user-updated', data: savedUser, userId: savedUser._id })
     } catch (err) {
